@@ -40,6 +40,10 @@ class NetioCollector:
         print(r.json())
         self.data = r.json()
 
+    def scrape_mock(self):
+        from mock import MOCK_4C, MOCK_COBRA
+        self.data = MOCK_COBRA
+
     def process_data(self):
         # clean data from previous run
         self.metrics = []
@@ -94,7 +98,9 @@ class NetioCollector:
 
 
     def collect(self):
-        self.scrape()
+        # self.scrape()
+        self.scrape_mock()
+
         # i = InfoMetricFamily('netio_info', 'popisek')
         # i.add_sample('agent', {k: str(v) for k, v in self.data['Agent'].items()}, 1)
         # i.info(self.data['Agent'])

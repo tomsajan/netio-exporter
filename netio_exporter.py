@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import argparse
 import logging
 import requests
@@ -107,6 +109,9 @@ class NetioCollector:
         self.metrics = []
 
     def scrape(self):
+        """
+        Obtain data from Netio
+        """
         logger.debug(f'Scraping netio at {self.args["url"]}')
         r = requests.get(self.args['url'],
                          auth=(self.args['username'], self.args['password']),
@@ -127,9 +132,10 @@ class NetioCollector:
             'json_version': self.data.get('Agent', {}).get('JSONVer'),
             'name': self.data.get('Agent', {}).get('DeviceName'),
             'outputs': str(self.data.get('Agent', {}).get('NumOutputs')),
-            # in 4C, the mac in the `SerialNumber` field
-            'mac': self.data.get('Agent', {}).get('MAC') or self.data.get('Agent', {}).get(
-                'SerialNumber'),
+            # in cobra, there is a `mac` field instead of the `SerialNumber` field
+            'sn': (self.data.get('Agent', {}).get('SerialNumber') or
+                   self.data.get('Agent', {}).get('MAC')),
+            'target': self.args['url']
         })
         self.metrics.append(info)
 
@@ -208,6 +214,9 @@ class NetioCollector:
         self.process_outputs()
 
     def collect(self):
+        """
+        Called by Prometheus library on each prometheus request
+        """
         self.scrape()
         # self.scrape_mock()
         self.process()

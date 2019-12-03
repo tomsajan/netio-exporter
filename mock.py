@@ -103,3 +103,73 @@ MOCK_4C = {
     }
   ]
 }
+
+MOCK_4ALL = {
+  "Agent": {
+    "Model": "NETIO 4All",
+    "Version": "3.3.1",
+    "JSONVer": "2.1",
+    "DeviceName": "myNetio",
+    "VendorID": 0,
+    "OemID": 0,
+    "SerialNumber": "24:A4:2C:39:28:1A",
+    "Uptime": 388,
+    "Time": "2019-12-03T21:17:49+00:00",
+    "NumOutputs": 4
+  },
+  "GlobalMeasure": {
+    "Voltage": 238.9,
+    "Frequency": 50,
+    "TotalCurrent": 0,
+    "OverallPowerFactor": 0,
+    "TotalLoad": 0,
+    "TotalEnergy": 0,
+    "EnergyStart": "2019-12-03T21:07:50+00:00"
+  },
+  "Outputs": [
+    {
+      "ID": 1,
+      "Name": "output_1",
+      "State": 0,
+      "Action": 6,
+      "Delay": 5000,
+      "Current": 0,
+      "PowerFactor": 0,
+      "Load": 0,
+      "Energy": 0
+    },
+    {
+      "ID": 2,
+      "Name": "output_2",
+      "State": 0,
+      "Action": 6,
+      "Delay": 5000,
+      "Current": 0,
+      "PowerFactor": 0,
+      "Load": 0,
+      "Energy": 0
+    },
+    {
+      "ID": 3,
+      "Name": "output_3",
+      "State": 0,
+      "Action": 6,
+      "Delay": 5000,
+      "Current": 0,
+      "PowerFactor": 0,
+      "Load": 0,
+      "Energy": 0
+    },
+    {
+      "ID": 4,
+      "Name": "output_4",
+      "State": 0,
+      "Action": 6,
+      "Delay": 5000,
+      "Current": 0,
+      "PowerFactor": 0,
+      "Load": 0,
+      "Energy": 0
+    }
+  ]
+}

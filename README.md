@@ -25,6 +25,7 @@ The `netio-exporter` can be configured both via `environment variables` and `com
 
 ## How to run?
 ### Native
+`Python 3.6` or later is required due to the usage of [f-strings](https://realpython.com/python-f-strings/) and [type-hinting](https://docs.python.org/3/library/typing.html)
 Install required python packages:
 ```
 pip install -r requirements.txt
@@ -37,7 +38,7 @@ python netio_exporter.py [-h] [-p PORT] [-u URL] [--username USERNAME]
 ```
 
 ### Docker
-Running the exporter in docker is also supported.
+Running the exporter in docker is also supported. There is also a pre-built image: [tomsajan/netio-exporter](https://hub.docker.com/r/tomsajan/netio-exporter/tags)
 ```
 docker run -tid --name netio-exporter -p <port:port> -e <ENV_NAME>=<ENV_VAL> <image_name>:<image_tag>
 
@@ -45,8 +46,10 @@ docker run -tid --name netio-exporter -p <port:port> -e <ENV_NAME>=<ENV_VAL> <im
 
 For example
 ```
-docker run -tid -p 9595:9595 -e NETIO_DEBUG=true -e NETIO_URL=http://192.168.0.242/netio.json -e NETIO_USERNAME=netio -e NETIO_PASSWORD=netio --name netio-exporter netio-exporter:latest 
-
+docker run -tid -p 9595:9595 -e NETIO_DEBUG=true -e NETIO_URL=http://192.168.0.242/netio.json -e NETIO_USERNAME=netio -e NETIO_PASSWORD=netio --name netio-exporter tomsajan/netio-exporter:latest 
 ```
 
 The exporter will be available on the specified port for Prometheus scraping.
+
+## Prometheus metrics
+The exporter provides the following prometheus metrics:

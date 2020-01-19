@@ -26,6 +26,7 @@ The `netio-exporter` can be configured both via `environment variables` and `com
 ## How to run?
 ### Native
 `Python 3.6` or later is required due to the usage of [f-strings](https://realpython.com/python-f-strings/) and [type-hinting](https://docs.python.org/3/library/typing.html)
+
 Install required python packages:
 ```
 pip install -r requirements.txt
@@ -53,3 +54,51 @@ The exporter will be available on the specified port for Prometheus scraping.
 
 ## Prometheus metrics
 The exporter provides the following prometheus metrics:
+
+| Metric | Description | Unit |
+|---|---|---|
+| netio_agent_info | Various info about the PDU, key-value information as labels | --- |
+| netio_global_current_amperes | Global current | A |
+| netio_global_energy_watthours_total | Total energy consumed | Wh |
+| netio_global_frequency_hertz | Inlet frequency | Hz |
+| netio_global_load_watts | Total PDU load | W |
+| netio_global_power_factor_ratio | Global Power factor | --- |
+| netio_global_voltage_volts | Inlet voltage | V |
+| netio_port_current_amperes | Per port current | A |
+| netio_port_energy_watthours_total | Per port consumed energy | Wh |
+| netio_port_load_watts | Per port load | W |
+| netio_port_power_factor_ratio | Per port power factor | --- |
+| netio_port_state | Whether port is ON/OFF | --- |
+
+
+An example output from a `PowerPDU 4C`
+```
+netio_agent_info{json_version="2.1",model="PowerPDU 4C",name="myNetio",outputs="4",sn="24:A4:2C:39:31:2E",target="http://192.168.0.121/netio.json",version="3.3.1"} 1.0
+netio_global_current_amperes 0.23
+netio_global_energy_watthours_total 543.0
+netio_global_frequency_hertz 50.0
+netio_global_load_watts 45.0
+netio_global_power_factor_ratio 0.85
+netio_global_voltage_volts 237.1
+netio_port_current_amperes{id="1"} 0.194
+netio_port_current_amperes{id="2"} 0.0
+netio_port_current_amperes{id="3"} 0.0
+netio_port_current_amperes{id="4"} 0.036000000000000004
+netio_port_energy_watthours_total{id="1"} 204.0
+netio_port_energy_watthours_total{id="2"} 0.0
+netio_port_energy_watthours_total{id="3"} 0.0
+netio_port_energy_watthours_total{id="4"} 338.0
+netio_port_load_watts{id="1"} 45.0
+netio_port_load_watts{id="2"} 0.0
+netio_port_load_watts{id="3"} 0.0
+netio_port_load_watts{id="4"} 0.0
+netio_port_power_factor_ratio{id="1"} 0.99
+netio_port_power_factor_ratio{id="2"} 0.0
+netio_port_power_factor_ratio{id="3"} 0.0
+netio_port_power_factor_ratio{id="4"} 0.1
+netio_port_state{id="1"} 1.0
+netio_port_state{id="2"} 0.0
+netio_port_state{id="3"} 0.0
+netio_port_state{id="4"} 1.0
+```
+

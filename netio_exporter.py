@@ -41,55 +41,44 @@ METRIC_MAP = {
 class NetioExporter:
 
     def __init__(self):
-        self.args = self.process_args()
-        if self.args['debug']:
+        self.args = self.parse_cmd_args()
+        if self.args.debug:
             logger.setLevel(logging.DEBUG)
-
-    def process_args(self):
-        """
-        Combine commandline and environment configuration
-        """
-        cmdline_args = self.parse_cmd_args()
-        args = {
-            'debug': os.environ.get('NETIO_DEBUG', cmdline_args.debug) in {True, 'true'},
-            'password': os.environ.get('NETIO_PASSWORD', cmdline_args.password),
-            'port': int(os.environ.get('NETIO_PORT', cmdline_args.port)),
-            'timeout': int(os.environ.get('NETIO_TIMEOUT', cmdline_args.timeout)),
-            'url': os.environ.get('NETIO_URL', cmdline_args.url),
-            'username': os.environ.get('NETIO_USERNAME', cmdline_args.username)
-        }
-        return args
 
     @staticmethod
     def parse_cmd_args() -> argparse.Namespace:
+        """
+        Parse cmdline arguments. If argument not used, use NETIO_* env value,
+        or fallback to default
+        """
         logger.debug('Parsing arguments')
         parser = argparse.ArgumentParser()
         parser.add_argument('-p', '--port',
                             dest='port',
                             type=int,
-                            default=9595,
+                            default=os.environ.get('NETIO_PORT', 9595),
                             help='Port to listen at')
         parser.add_argument('-u', '--netio-url',
                             dest='url',
-                            default='http://192.168.0.242/netio.json',
+                            default=os.environ.get('NETIO_URL', 'http://192.168.0.242/netio.json'),
                             help='Netio JSON API url')
         parser.add_argument('--username',
                             dest='username',
-                            default='netio',
+                            default=os.environ.get('NETIO_USERNAME', 'netio '),
                             help='Netio JSON API username')
         parser.add_argument('--password',
                             dest='password',
-                            default='netio',
+                            default=os.environ.get('NETIO_PASSWORD', 'netio'),
                             help='Netio JSON API password')
         parser.add_argument('-d', '--debug',
                             dest='debug',
                             action='store_true',
-                            default=False,
+                            default=os.environ.get('NETIO_DEBUG', 'false').lower() == 'true',
                             help='Enable debug output')
         parser.add_argument('-t', '--timeout',
                             default=5,
                             type=int,
-                            dest='timeout',
+                            dest=os.environ.get('NETIO_TIMEOUT', 'timeout'),
                             help='Requests timeout')
 
         return parser.parse_args()
@@ -98,7 +87,7 @@ class NetioExporter:
         logger.info('Starting Netio Prometheus Exporter')
         REGISTRY.register(NetioCollector(self.args))
         app = make_wsgi_app()
-        httpd = make_server('', self.args['port'], app)
+        httpd = make_server('', self.args.port, app)
         httpd.serve_forever()
 
 
@@ -112,10 +101,10 @@ class NetioCollector:
         """
         Obtain data from Netio
         """
-        logger.debug(f'Scraping netio at {self.args["url"]}')
-        r = requests.get(self.args['url'],
-                         auth=(self.args['username'], self.args['password']),
-                         timeout=self.args['timeout'])
+        logger.debug(f'Scraping netio at {self.args.url}')
+        r = requests.get(self.args.url,
+                         auth=(self.args.username, self.args.password),
+                         timeout=self.args.timeout)
         r.raise_for_status()
         self.data = r.json()
 
@@ -135,7 +124,7 @@ class NetioCollector:
             # in cobra, there is a `mac` field instead of the `SerialNumber` field
             'sn': (self.data.get('Agent', {}).get('SerialNumber') or
                    self.data.get('Agent', {}).get('MAC')),
-            'target': self.args['url']
+            'target': self.args.url
         })
         self.metrics.append(info)
 
@@ -218,7 +207,6 @@ class NetioCollector:
         Called by Prometheus library on each prometheus request
         """
         self.scrape()
-        # self.scrape_mock()
         self.process()
 
         for metric in self.metrics:

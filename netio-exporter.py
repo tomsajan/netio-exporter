@@ -16,6 +16,8 @@ from prometheus_client.core import (
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('netio-exporter')
 
+VERSION = '0.0.1'
+
 # A named tuple that binds various aspects of each metric netio provides
 Metric = namedtuple('Metric', ('metric_family', 'name', 'doc', 'unit', 'scale'))
 
@@ -60,7 +62,10 @@ class NetioExporter:
                             help='Port to listen at')
         parser.add_argument('-u', '--netio-url',
                             dest='url',
-                            default=os.environ.get('NETIO_URL', 'http://192.168.0.242/netio.json'),
+                            default=os.environ.get('NETIO_URL', None),
+                            # if non-empty ENV var is used,
+                            # then the cmdline alternative is not required
+                            required=not os.environ.get('NETIO_URL'),
                             help='Netio JSON API url')
         parser.add_argument('--username',
                             dest='username',
@@ -80,6 +85,12 @@ class NetioExporter:
                             type=int,
                             dest=os.environ.get('NETIO_TIMEOUT', 'timeout'),
                             help='Requests timeout')
+        parser.add_argument('-v', '--version',
+                            dest='version',
+                            help='Print exporter version and exit',
+                            action='version',
+                            version=f'%(prog)s {VERSION}'
+                            )
 
         return parser.parse_args()
 

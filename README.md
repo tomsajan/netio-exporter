@@ -11,17 +11,20 @@ All NETIO products equipped with the ability to expose data via JSON are support
 - [Powercable REST](https://www.netio-products.com/en/device/powercable-rest-101x) 
 
 ## Configuration
-The `netio-exporter` can be configured both via `environment variables` and `commandline arguments`. The following options are available:
+The `netio-exporter` can be configured both via `environment variables` and `commandline arguments`.
+The CMDline arguments have the highest priority. The following options are available:
 
-| ENV   |      CMDline      |  Description |
-|----------|:-------------:|------:|
-| NETIO_URL=<url> | `-u URL`, `--netio-url URL` | netio.json endpoint of the monitored Netio PDU. For example `http://192.168.0.1/netio.json` |
-| NETIO_PORT=<port> | `-p PORT`, `--port PORT` | The port the exporter will listen at. The default is `9595`. This port is registered on [Prometheus](https://github.com/prometheus/prometheus/wiki/Default-port-allocations#exporters-starting-at-9100) to avoid clashes with other exporter |
-| NETIO_USERNAME=<username> | `--username USERNAME` | Username used for authentication into the JSON API |
-| NETIO_PASSWORD=<pass> | `--password PASSWORD` | Password used for authentication into the JSON API |
-| NETIO_DEBUG=true | `d`, `--debug` | Turn on debug logging |
-| NETIO_TIMEOUT=<timeout> | `t TIMEOUT`, `--timeout TIMEOUT` | Request timeout. In seconds |
+| ENV                       | CMDline                           | Default |Description |
+|---------------------------|-----------------------------------|---------|-------------|
+| NETIO_URL=<url>           | `-u URL`, `--netio-url URL`       | --------| netio.json endpoint of the monitored Netio PDU. For example `http://192.168.0.1/netio.json` |
+| NETIO_PORT=<port>         | `-p PORT`, `--port PORT`          | `9595`  | The port the exporter will listen at. The default port is registered on [Prometheus](https://github.com/prometheus/prometheus/wiki/Default-port-allocations#exporters-starting-at-9100) to avoid clashes with other exportera |
+| NETIO_USERNAME=<username> | `--username USERNAME`             | `netio` | Username used for authentication into the JSON API |
+| NETIO_PASSWORD=<pass>     | `--password PASSWORD`             | `netio` | Password used for authentication into the JSON API |
+| NETIO_DEBUG=true          | `-d`, `--debug`                   | `False` | Turn on debug logging |
+| NETIO_TIMEOUT=<timeout>   | `-t TIMEOUT`, `--timeout TIMEOUT` | `5`     | Request timeout. In seconds |
 
+
+Note: if no authentication (username, password) is required (turned off in NETIO), the default can be used as the credentials are not checked on the NETIO side.
 
 ## How to run?
 ### Native
@@ -34,8 +37,8 @@ pip install -r requirements.txt
 
 Start the exporter:
 ```
-python netio_exporter.py [-h] [-p PORT] [-u URL] [--username USERNAME]
-                         [--password PASSWORD] [-d] [-t TIMEOUT]
+python netio-exporter.py [-h] [-p PORT] -u URL [--username USERNAME]
+                         [--password PASSWORD] [-d] [-t TIMEOUT] [-v]
 ```
 
 ### Docker
@@ -56,7 +59,7 @@ The exporter will be available on the specified port for Prometheus scraping.
 The exporter provides the following prometheus metrics:
 
 | Metric | Description | Unit |
-|---|---|---|
+|--------|-------------|------|
 | netio_agent_info | Various info about the PDU, key-value information as labels | --- |
 | netio_global_current_amperes | Global current | A |
 | netio_global_energy_watthours_total | Total energy consumed | Wh |
@@ -102,3 +105,7 @@ netio_port_state{id="3"} 0.0
 netio_port_state{id="4"} 1.0
 ```
 
+## Grafana dashboard
+This is something to be done later
+
+**Happy hacking!**

@@ -106,6 +106,6 @@ netio_port_state{id="4"} 1.0
 ```
 
 ## Grafana dashboard
-This is something to be done later
+The grafana dashboard for metrics from this exporter can be found [here](https://grafana.com/grafana/dashboards/12022)
 
 **Happy hacking!**

@@ -28,7 +28,7 @@ Some Netio models are equipped with [power measurement](https://www.netio-produc
 This data is available via [API](https://www.netio-products.com/en/glossary/m2m-m2m-api). It is very useful to gain some
 insight into the historical trends of the data Netio provides, to do some calculations and to be able to create alerts based
 on events reported by Netio.
-Prometheus nicely extends the Netio real-time monitoring capabilities with it's own time-series database and analyical tools.
+Prometheus nicely extends the Netio real-time monitoring capabilities with it's own time-series database and analytical tools.
 
 Prometheus works in a `pull based` mode. It means it regularly requests time series data in a specific [format](https://prometheus.io/docs/concepts/data_model/#notation).
 The format of the prometheus data looks roughly like this:
@@ -47,9 +47,9 @@ There is an opensource [Netio Exporter](https://github.com/tomsajan/netio-export
 This exporter utilizes the [JSON](https://www.netio-products.com/files/NETIO-M2M-API-Protocol-JSON.pdf) API to get the relevant data from the Netio power sockets.
 
 ## Grafana
-Prometheus excels as a metrics data storage and alerting tool. Although it has a basic UI that could be used
+Prometheus is awesome as a metrics data storage and alerting tool. Although it has a basic UI that could be used
 for quick searches and simple visualisations, it is not ideal for nice data presentation and persistent dashboards.
-This the area where [Grafana](grafana.com) excells.
+This the area where [Grafana](grafana.com) excels.
 
 Grafana is open source visualization and analytics software. It allows you to query, visualize, alert on, and explore your metrics no matter where they are stored.  
 In plain English, it provides you with tools to turn your time-series database (TSDB) data into beautiful graphs and visualizations.
@@ -63,7 +63,7 @@ For example `apt install prometheus` on `debian` based distributions
 
 More universal way to install it is via docker. Please follow the guide on the provided [link](https://prometheus.io/docs/prometheus/latest/installation/#using-docker).
 
-For any way of installation, a configuratino file for Prometheus (`prometheus.yml`) must be provided.
+For any way of installation, a configuration file for Prometheus (`prometheus.yml`) must be provided.
 Below is a minimal working example for scraping the Netio Exporter.
 ```
 # my global config
@@ -115,10 +115,10 @@ git clone https://github.com/tomsajan/netio-exporter.git
 and follow the [guide](https://github.com/tomsajan/netio-exporter#how-to-run)
 
 #### Docker
-It is even easier to start it in Docker, because no additional setup (like installing python dependencies) is neede.
+It is even easier to start it in Docker, because no additional setup (like installing python dependencies) is needed.
 There is already a prebuilt netio exporter docker [image](https://hub.docker.com/r/tomsajan/netio-exporter/tags).
 
-Running it as simple as running:
+Running it is as simple as:
 ```
 docker run -tid -p 9595:9595 -e NETIO_URL=http://192.168.0.242/netio.json -e NETIO_USERNAME=netio -e NETIO_PASSWORD=netio --name netio-exporter tomsajan/netio-exporter:latest
 ```
@@ -149,7 +149,7 @@ docker run -d -p 3000:3000 grafana/grafana
 ```
 The Grafana UI will be available on the port `3000` on your machine.
 The most useful feature of Grafana in our context is it's dashboarding. It allows us compose a dashboard from multiple graphs to give us a quick overview of a certain field.
-But before we dive into the dashboards, we need to configure grafana to use the `prometheus` we installed previously as it's datasource. Note that grafana is fairyly universal tool that can cooperate with many different kinds of datasources.
+But before we dive into the dashboards, we need to configure grafana to use the `prometheus` we installed previously as it's datasource. Note that grafana is fairly universal tool that can cooperate with many different kinds of datasources.
 
 - head over to the grafana UI
 - `admin/admin` should be the default `username/password`
@@ -168,9 +168,9 @@ Now it is ready to access Prometheus (and Netio within it) data.
 
 The author of the `netio-exporter` was so kind that he prepared also a related Grafana [dashboard](https://grafana.com/grafana/dashboards/12022) which visualises the data the `netio-exporter` produces.
 
-Including it into grafana is very easy.  
+Including it into grafana is very easy.
 Click on the `plus` sign on the top left corner and select `import`.
-In the next dialogue paste dashboard ID `12022` and click `load`. Then on the next step select the previously created prometheus datasource (botom line) and click `import`.  
+In the next dialogue paste dashboard ID `12022` and click `load`. Then on the next step select the previously created prometheus datasource (bottom line) and click `import`.
 Now within a second you new dashboard tailored for Netio will appear.
 
 ![grafana import](grafana_import.png)

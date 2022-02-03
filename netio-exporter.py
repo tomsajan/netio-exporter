@@ -134,9 +134,11 @@ class NetioCollector:
             'outputs': str(self.data.get('Agent', {}).get('NumOutputs')),
             # in cobra, there is a `mac` field instead of the `SerialNumber` field
             'sn': (self.data.get('Agent', {}).get('SerialNumber') or
-                   self.data.get('Agent', {}).get('MAC')),
+                   self.data.get('Agent', {}).get('MAC')) or
+                  "Unknown",
             'target': self.args.url
         })
+        logger.debug(info)
         self.metrics.append(info)
 
     def process_global(self):

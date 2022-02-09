@@ -52,7 +52,7 @@ Prometheus se dá nainstalovat mnoha způsoby. Nejsnazší způsob je využít d
 
 Univerzálnějsí způsob je použít Docker. Pro instalaci pomocí dockeru prosím následujte [návod](https://prometheus.io/docs/prometheus/latest/installation/#using-docker).
 
-Ať už nainstalujete Prometheus jakýmkoliv způsobem, je potřeba ho po instlaci nakonfigurovat tak, aby dokázál stahovat data z Netia pomocí Netio Exporteru.
+Ať už nainstalujete Prometheus jakýmkoliv způsobem, je potřeba ho po instalaci nakonfigurovat tak, aby dokázal stahovat data z Netia pomocí Netio Exporteru.
 Níže je co nejjednodušší funkční konfigurace pro stahování dat ze tří exporterů.
 
 ```

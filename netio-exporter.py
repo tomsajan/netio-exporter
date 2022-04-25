@@ -135,7 +135,7 @@ class NetioCollector:
             # in cobra, there is a `mac` field instead of the `SerialNumber` field
             'sn': (self.data.get('Agent', {}).get('SerialNumber') or
                    self.data.get('Agent', {}).get('MAC')) or
-                  "Unknown",
+                  'Unknown',
             'target': self.args.url
         })
         logger.debug(info)

@@ -132,11 +132,13 @@ class NetioCollector:
             'json_version': self.data.get('Agent', {}).get('JSONVer'),
             'name': self.data.get('Agent', {}).get('DeviceName'),
             'outputs': str(self.data.get('Agent', {}).get('NumOutputs')),
-            # in cobra, there is a `mac` field instead of the `SerialNumber` field
+            # in cobra, there is a `mac` field instead of the `SerialNumber` field. There are also some 4Cs, that have `SerialNumber` empty.
             'sn': (self.data.get('Agent', {}).get('SerialNumber') or
-                   self.data.get('Agent', {}).get('MAC')),
+                   self.data.get('Agent', {}).get('MAC')) or
+                  'Unknown',
             'target': self.args.url
         })
+        logger.debug(f'Agent info metric: {info}')
         self.metrics.append(info)
 
     def process_global(self):

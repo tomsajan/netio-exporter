@@ -138,7 +138,7 @@ class NetioCollector:
                   'Unknown',
             'target': self.args.url
         })
-        logger.debug(info)
+        logger.debug(f'Agent info metric: {info}')
         self.metrics.append(info)
 
     def process_global(self):

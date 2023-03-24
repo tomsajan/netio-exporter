@@ -193,14 +193,14 @@ class NetioCollector:
                 f'netio_port_{metric_metadata.name}',
                 metric_metadata.doc,
                 unit=metric_metadata.unit,
-                labels=['id','name']
+                labels=['id', 'name']
             )
 
             # iterate over outputs
             # group the metric values from outputs
             for output in outputs:
                 metric.add_metric(
-                    labels=[str(output['ID']),str(output['Name'])],
+                    labels=[str(output['ID']), str(output['Name'])],
                     # extract value and scale it to base SI units
                     value=output[metric_name] * metric_metadata.scale
                 )

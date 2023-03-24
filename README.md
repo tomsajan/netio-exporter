@@ -83,26 +83,26 @@ netio_global_frequency_hertz 50.0
 netio_global_load_watts 45.0
 netio_global_power_factor_ratio 0.85
 netio_global_voltage_volts 237.1
-netio_port_current_amperes{id="1"} 0.194
-netio_port_current_amperes{id="2"} 0.0
-netio_port_current_amperes{id="3"} 0.0
-netio_port_current_amperes{id="4"} 0.036000000000000004
-netio_port_energy_watthours_total{id="1"} 204.0
-netio_port_energy_watthours_total{id="2"} 0.0
-netio_port_energy_watthours_total{id="3"} 0.0
-netio_port_energy_watthours_total{id="4"} 338.0
-netio_port_load_watts{id="1"} 45.0
-netio_port_load_watts{id="2"} 0.0
-netio_port_load_watts{id="3"} 0.0
-netio_port_load_watts{id="4"} 0.0
-netio_port_power_factor_ratio{id="1"} 0.99
-netio_port_power_factor_ratio{id="2"} 0.0
-netio_port_power_factor_ratio{id="3"} 0.0
-netio_port_power_factor_ratio{id="4"} 0.1
-netio_port_state{id="1"} 1.0
-netio_port_state{id="2"} 0.0
-netio_port_state{id="3"} 0.0
-netio_port_state{id="4"} 1.0
+netio_port_current_amperes{id="1",name="output_1"} 0.194
+netio_port_current_amperes{id="2",name="output_2"} 0.0
+netio_port_current_amperes{id="3",name="output_3"} 0.0
+netio_port_current_amperes{id="4",name="output_4"} 0.036000000000000004
+netio_port_energy_watthours_total{id="1",name="output_1"} 204.0
+netio_port_energy_watthours_total{id="2",name="output_2"} 0.0
+netio_port_energy_watthours_total{id="3",name="output_3"} 0.0
+netio_port_energy_watthours_total{id="4",name="output_4"} 338.0
+netio_port_load_watts{id="1",name="output_1"} 45.0
+netio_port_load_watts{id="2",name="output_2"} 0.0
+netio_port_load_watts{id="3",name="output_3"} 0.0
+netio_port_load_watts{id="4",name="output_4"} 0.0
+netio_port_power_factor_ratio{id="1",name="output_1"} 0.99
+netio_port_power_factor_ratio{id="2",name="output_2"} 0.0
+netio_port_power_factor_ratio{id="3",name="output_3"} 0.0
+netio_port_power_factor_ratio{id="4",name="output_4"} 0.1
+netio_port_state{id="1",name="output_1"} 1.0
+netio_port_state{id="2",name="output_2"} 0.0
+netio_port_state{id="3",name="output_3"} 0.0
+netio_port_state{id="4",name="output_4"} 1.0
 ```
 
 ## Grafana dashboard

@@ -6,6 +6,7 @@ import requests
 import os
 
 from collections import namedtuple
+from datetime import datetime, timedelta
 from wsgiref.simple_server import make_server
 from prometheus_client import make_wsgi_app
 
@@ -75,6 +76,21 @@ class NetioExporter:
                             dest='password',
                             default=os.environ.get('NETIO_PASSWORD', 'netio'),
                             help='Netio JSON API password')
+        parser.add_argument('--cache',
+                            dest='cache',
+                            action='store_true',
+                            default=os.environ.get('NETIO_CACHE', 'false').lower() == 'true',
+                            help='Turn caching on/off')
+        parser.add_argument('--cache-usage-count',
+                            dest='cache_usage_count',
+                            type=int,
+                            default=os.environ.get('NETIO_CACHE_USAGE_COUNT', -1),
+                            help='How many times the cache can be used before expiring. Set to -1 to unlimited.')
+        parser.add_argument('--cache-usage-seconds',
+                            dest='cache_usage_seconds',
+                            type=int,
+                            default=os.environ.get('NETIO_CACHE_USAGE_SECONDS', 120),
+                            help='For how long the cache is valid. In seconds. Set to -1 to unlimited.')
         parser.add_argument('-d', '--debug',
                             dest='debug',
                             action='store_true',
@@ -107,17 +123,59 @@ class NetioCollector:
         self.args = args
         self.data = {}
         self.metrics = []
+        self.cache = {}
+        self.first = True
 
+    def save_to_cache(self, data):
+        logger.debug('Saving data to cache')
+        self.cache['data'] = data
+        self.cache['usage_counter'] = 0
+        self.cache['timestamp'] = datetime.now()
+        
+    def load_from_cache(self):
+        logger.debug('Loading data from cache')
+        if not self.cache:
+            logger.debug('No data in cache')
+            raise Exception('Netio data source unavailable and no data in cache')
+        if self.args.cache_usage_count != -1 and self.cache['usage_counter'] >= self.args.cache_usage_count:
+            # purge cache on expiry
+            logger.debug('Cache used too many times. Purging cache.')
+            self.cache = {}
+            raise Exception('Netio data source unavailable and cache used too many times')
+        if self.args.cache_usage_seconds != -1 and (datetime.now() - timedelta(seconds=self.args.cache_usage_seconds)) >= self.cache['timestamp']:
+            # purge cache on expiry
+            logger.debug('Cache too old. Purging cache.')
+            self.cache = {}
+            raise Exception('Netio data source unavailable and cache too old')
+        
+        # increment the number of times the cache has been used
+        self.cache['usage_counter'] += 1
+        logger.info('Data successfully loaded from cache.')
+        return self.cache['data']
+        
     def scrape(self):
         """
         Obtain data from Netio
         """
         logger.debug(f'Scraping netio at {self.args.url}')
-        r = requests.get(self.args.url,
-                         auth=(self.args.username, self.args.password),
-                         timeout=self.args.timeout)
-        r.raise_for_status()
-        self.data = r.json()
+        
+        try:
+            r = requests.get(self.args.url,
+                             auth=(self.args.username, self.args.password),
+                             timeout=self.args.timeout)
+            r.raise_for_status()
+        # Intentionally I catch here everything...I just want to use cache if anything happens
+        except:
+            logger.info('Scraping netio failed. I will try to use cache.')
+            if self.args.cache:
+                self.data = self.load_from_cache()
+            else:
+                raise
+        else:
+            self.data = r.json()
+            logger.debug('Successfully scraped netio')
+            if self.args.cache:
+                self.save_to_cache(self.data)
 
     def process_info(self):
         """
@@ -219,6 +277,13 @@ class NetioCollector:
         """
         Called by Prometheus library on each prometheus request
         """
+        # Collector automatically runs `collect` on startup.
+        # Avoid scraping netio at the start
+        #  - in case Netio is unavailable, it will crash - event loop is not yet running
+        if self.first:
+            self.first = False
+            return 
+        
         self.scrape()
         self.process()
 

@@ -70,7 +70,7 @@ class NetioExporter:
                             help='Netio JSON API url')
         parser.add_argument('--username',
                             dest='username',
-                            default=os.environ.get('NETIO_USERNAME', 'netio '),
+                            default=os.environ.get('NETIO_USERNAME', 'netio'),
                             help='Netio JSON API username')
         parser.add_argument('--password',
                             dest='password',

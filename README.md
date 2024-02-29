@@ -14,14 +14,14 @@ All NETIO products equipped with the ability to expose data via JSON are support
 The `netio-exporter` can be configured both via `environment variables` and `commandline arguments`.
 The CMDline arguments have the highest priority. The following options are available:
 
-| ENV                       | CMDline                           | Default |Description |
-|---------------------------|-----------------------------------|---------|-------------|
-| NETIO_URL=<url>           | `-u URL`, `--netio-url URL`       | --------| netio.json endpoint of the monitored Netio PDU. For example `http://192.168.0.1/netio.json` |
-| NETIO_PORT=<port>         | `-p PORT`, `--port PORT`          | `9595`  | The port the exporter will listen at. The default port is registered on [Prometheus](https://github.com/prometheus/prometheus/wiki/Default-port-allocations#exporters-starting-at-9100) to avoid clashes with other exportera |
-| NETIO_USERNAME=<username> | `--username USERNAME`             | `netio` | Username used for authentication into the JSON API |
-| NETIO_PASSWORD=<pass>     | `--password PASSWORD`             | `netio` | Password used for authentication into the JSON API |
-| NETIO_DEBUG=true          | `-d`, `--debug`                   | `False` | Turn on debug logging |
-| NETIO_TIMEOUT=<timeout>   | `-t TIMEOUT`, `--timeout TIMEOUT` | `5`     | Request timeout. In seconds |
+| ENV                       | CMDline                           | Default | Description                                                                                                                                                                                                                   |
+|---------------------------|-----------------------------------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| NETIO_URL=<url>           | `-u URL`, `--netio-url URL`       | --------| netio.json endpoint of the monitored Netio PDU. For example `http://192.168.0.1/netio.json`                                                                                                                                   |
+| NETIO_PORT=<port>         | `-p PORT`, `--port PORT`          | `9595`  | The port the exporter will listen at. The default port is registered on [Prometheus](https://github.com/prometheus/prometheus/wiki/Default-port-allocations#exporters-starting-at-9100) to avoid clashes with other exporters |
+| NETIO_USERNAME=<username> | `--username USERNAME`             | `netio` | Username used for authentication into the JSON API                                                                                                                                                                            |
+| NETIO_PASSWORD=<pass>     | `--password PASSWORD`             | `netio` | Password used for authentication into the JSON API                                                                                                                                                                            |
+| NETIO_DEBUG=true          | `-d`, `--debug`                   | `False` | Turn on debug logging                                                                                                                                                                                                         |
+| NETIO_TIMEOUT=<timeout>   | `-t TIMEOUT`, `--timeout TIMEOUT` | `5`     | Request timeout. In seconds                                                                                                                                                                                                   |
 
 
 Note: if no authentication (username, password) is required (turned off in NETIO), the default can be used as the credentials are not checked on the NETIO side.

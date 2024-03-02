@@ -11,7 +11,7 @@ from wsgiref.simple_server import make_server
 from prometheus_client import make_wsgi_app
 
 from prometheus_client.core import (
-    InfoMetricFamily, GaugeMetricFamily, REGISTRY, CounterMetricFamily
+    InfoMetricFamily, GaugeMetricFamily, REGISTRY, CounterMetricFamily, Metric
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -119,20 +119,20 @@ class NetioExporter:
 
 
 class NetioCollector:
-    def __init__(self, args):
+    def __init__(self, args: argparse.Namespace) -> None:
         self.args = args
         self.data = {}
         self.metrics = []
         self.cache = {}
         self.first = True
 
-    def save_to_cache(self, data):
+    def save_to_cache(self, data: dict) -> None:
         logger.debug('Saving data to cache')
         self.cache['data'] = data
         self.cache['usage_counter'] = 0
         self.cache['timestamp'] = datetime.now()
 
-    def load_from_cache(self):
+    def load_from_cache(self) -> dict:
         logger.debug('Loading data from cache')
         if not self.cache:
             logger.debug('No data in cache')
@@ -154,7 +154,7 @@ class NetioCollector:
         logger.info('Data successfully loaded from cache.')
         return self.cache['data']
 
-    def scrape(self):
+    def scrape(self) -> None:
         """
         Obtain data from Netio
         """
@@ -182,7 +182,7 @@ class NetioCollector:
             if self.args.cache:
                 self.save_to_cache(self.data)
 
-    def process_info(self):
+    def process_info(self) -> None:
         """
         Process Agent section of the json output
         """
@@ -205,7 +205,7 @@ class NetioCollector:
         logger.debug(f'Agent info metric: {info}')
         self.metrics.append(info)
 
-    def process_global(self):
+    def process_global(self) -> None:
         """
         Process global section of the json output
         """
@@ -231,7 +231,7 @@ class NetioCollector:
                 )
             )
 
-    def process_outputs(self):
+    def process_outputs(self) -> None:
         """
         Process individual outputs of netio
         """
@@ -270,7 +270,7 @@ class NetioCollector:
                 )
             self.metrics.append(metric)
 
-    def process(self):
+    def process(self) -> None:
         # clean data from previous run
         self.metrics = []
 
@@ -279,7 +279,7 @@ class NetioCollector:
         self.process_global()
         self.process_outputs()
 
-    def collect(self):
+    def collect(self) -> Metric:
         """
         Called by Prometheus library on each prometheus request
         """

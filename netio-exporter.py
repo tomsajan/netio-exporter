@@ -17,14 +17,14 @@ from prometheus_client.core import (
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('netio-exporter')
 
-VERSION = '0.0.1'
+VERSION = '0.0.4'
 
 # A named tuple that binds various aspects of each metric netio provides
 Metric = namedtuple('Metric', ('metric_family', 'name', 'doc', 'unit', 'scale'))
 
 # Unit usage: https://prometheus.io/docs/practices/naming/#base-units
 # Basic units shall be used in prometheus, thus the scaling
-# Netio presents some units in `mili` scale
+# Netio presents some units in `milli` scale
 METRIC_MAP = {
     'Voltage': Metric(GaugeMetricFamily, 'voltage', 'input voltage (V)', 'volts', 1),
     'Frequency': Metric(GaugeMetricFamily, 'frequency', 'frequency (Hz)', 'hertz', 1),
@@ -85,7 +85,8 @@ class NetioExporter:
                             dest='cache_usage_count',
                             type=int,
                             default=os.environ.get('NETIO_CACHE_USAGE_COUNT', -1),
-                            help='How many times the cache can be used before expiring. Set to -1 to unlimited.')
+                            help='How many times the cache can be used before expiring. '
+                                 'Set to -1 to unlimited.')
         parser.add_argument('--cache-usage-seconds',
                             dest='cache_usage_seconds',
                             type=int,
@@ -105,8 +106,7 @@ class NetioExporter:
                             dest='version',
                             help='Print exporter version and exit',
                             action='version',
-                            version=f'%(prog)s {VERSION}'
-                            )
+                            version=f'%(prog)s {VERSION}')
 
         return parser.parse_args()
 
@@ -131,7 +131,7 @@ class NetioCollector:
         self.cache['data'] = data
         self.cache['usage_counter'] = 0
         self.cache['timestamp'] = datetime.now()
-        
+
     def load_from_cache(self):
         logger.debug('Loading data from cache')
         if not self.cache:
@@ -142,38 +142,43 @@ class NetioCollector:
             logger.debug('Cache used too many times. Purging cache.')
             self.cache = {}
             raise Exception('Netio data source unavailable and cache used too many times')
-        if self.args.cache_usage_seconds != -1 and (datetime.now() - timedelta(seconds=self.args.cache_usage_seconds)) >= self.cache['timestamp']:
+        if self.args.cache_usage_seconds != -1 and (
+                datetime.now() - timedelta(seconds=self.args.cache_usage_seconds)) >= self.cache['timestamp']:
             # purge cache on expiry
             logger.debug('Cache too old. Purging cache.')
             self.cache = {}
             raise Exception('Netio data source unavailable and cache too old')
-        
+
         # increment the number of times the cache has been used
         self.cache['usage_counter'] += 1
         logger.info('Data successfully loaded from cache.')
         return self.cache['data']
-        
+
     def scrape(self):
         """
         Obtain data from Netio
         """
         logger.debug(f'Scraping netio at {self.args.url}')
-        
+
         try:
             r = requests.get(self.args.url,
                              auth=(self.args.username, self.args.password),
                              timeout=self.args.timeout)
             r.raise_for_status()
         # Intentionally I catch here everything...I just want to use cache if anything happens
-        except:
-            logger.info('Scraping netio failed. I will try to use cache.')
+        except requests.RequestException as e:
+            logger.info('Scraping netio failed.')
+            logger.debug(f'Reason for failure: {e}')
+            # if caching is enabled, try to load data from cache in case of exception
             if self.args.cache:
+                logger.info('I will try to use cache.')
                 self.data = self.load_from_cache()
             else:
                 raise
         else:
             self.data = r.json()
             logger.debug('Successfully scraped netio')
+            # if caching is turned on, save the data to cache for later use
             if self.args.cache:
                 self.save_to_cache(self.data)
 
@@ -190,7 +195,8 @@ class NetioCollector:
             'json_version': self.data.get('Agent', {}).get('JSONVer'),
             'name': self.data.get('Agent', {}).get('DeviceName'),
             'outputs': str(self.data.get('Agent', {}).get('NumOutputs')),
-            # in cobra, there is a `mac` field instead of the `SerialNumber` field. There are also some 4Cs, that have `SerialNumber` empty.
+            # in cobra, there is a `mac` field instead of the `SerialNumber` field.
+            # There are also some 4Cs, that have `SerialNumber` empty.
             'sn': (self.data.get('Agent', {}).get('SerialNumber') or
                    self.data.get('Agent', {}).get('MAC')) or
                   'Unknown',
@@ -277,13 +283,15 @@ class NetioCollector:
         """
         Called by Prometheus library on each prometheus request
         """
+        
         # Collector automatically runs `collect` on startup.
         # Avoid scraping netio at the start
         #  - in case Netio is unavailable, it will crash - event loop is not yet running
+        # Not nice :(
         if self.first:
             self.first = False
-            return 
-        
+            return
+
         self.scrape()
         self.process()
 

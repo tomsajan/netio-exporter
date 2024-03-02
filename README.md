@@ -4,27 +4,34 @@ Prometheus exporter for NETIO PDUs
 This program is designed to obtain metering information from various [Netio](https://www.netio-products.com/en/products/all-products) products and expose them in format scrapable by [Prometheus](https://prometheus.io/)
 
 
-All NETIO products equipped with the ability to expose data via JSON are supported. Currently those are:
+All NETIO products equipped with the ability to expose data via JSON are supported. Those are for example:
 - [Netio 4ALL](https://www.netio-products.com/en/device/netio-4all) 
 - [Netio 4](https://www.netio-products.com/en/device/netio-4) 
 - [PowerPDU 4C](https://www.netio-products.com/en/device/powerpdu-4c) 
 - [Powercable REST](https://www.netio-products.com/en/device/powercable-rest-101x) 
+- ... and many more with JSON Open API support - see current [Netio lineup](https://www.netio-products.com/en/products/all-products) 
 
 ## Configuration
 The `netio-exporter` can be configured both via `environment variables` and `commandline arguments`.
 The CMDline arguments have the highest priority. The following options are available:
 
-| ENV                       | CMDline                           | Default | Description                                                                                                                                                                                                                   |
-|---------------------------|-----------------------------------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| NETIO_URL=<url>           | `-u URL`, `--netio-url URL`       | --------| netio.json endpoint of the monitored Netio PDU. For example `http://192.168.0.1/netio.json`                                                                                                                                   |
-| NETIO_PORT=<port>         | `-p PORT`, `--port PORT`          | `9595`  | The port the exporter will listen at. The default port is registered on [Prometheus](https://github.com/prometheus/prometheus/wiki/Default-port-allocations#exporters-starting-at-9100) to avoid clashes with other exporters |
-| NETIO_USERNAME=<username> | `--username USERNAME`             | `netio` | Username used for authentication into the JSON API                                                                                                                                                                            |
-| NETIO_PASSWORD=<pass>     | `--password PASSWORD`             | `netio` | Password used for authentication into the JSON API                                                                                                                                                                            |
-| NETIO_DEBUG=true          | `-d`, `--debug`                   | `False` | Turn on debug logging                                                                                                                                                                                                         |
-| NETIO_TIMEOUT=<timeout>   | `-t TIMEOUT`, `--timeout TIMEOUT` | `5`     | Request timeout. In seconds                                                                                                                                                                                                   |
-
+| ENV                                 | CMDline                           | Default  | Description                                                                                                                                                                                                                   |
+|-------------------------------------|-----------------------------------|----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| NETIO_URL=<url>                     | `-u URL`, `--netio-url URL`       | -------- | netio.json endpoint of the monitored Netio PDU. For example `http://192.168.0.1/netio.json`                                                                                                                                   |
+| NETIO_PORT=<port>                   | `-p PORT`, `--port PORT`          | `9595`   | The port the exporter will listen at. The default port is registered on [Prometheus](https://github.com/prometheus/prometheus/wiki/Default-port-allocations#exporters-starting-at-9100) to avoid clashes with other exporters |
+| NETIO_USERNAME=<username>           | `--username USERNAME`             | `netio`  | Username used for authentication into the JSON API                                                                                                                                                                            |
+| NETIO_PASSWORD=<pass>               | `--password PASSWORD`             | `netio`  | Password used for authentication into the JSON API                                                                                                                                                                            |
+| NETIO_DEBUG=true                    | `-d`, `--debug`                   | `false`  | Turn on debug logging                                                                                                                                                                                                         |
+| NETIO_TIMEOUT=<timeout>             | `-t TIMEOUT`, `--timeout TIMEOUT` | `5`      | Request timeout. In seconds                                                                                                                                                                                                   |
+| NETIO_CACHE=true                    | `--cache`                         | `false`  | Turn caching on/off                                                                                                                                                                                                           |
+| NETIO_CACHE_USAGE_COUNT=<count>     | `--cache-usage-count COUNT`       | `-1`     | How many times cache can be used. `-1` means unlimited.                                                                                                                                                                       |
+| NETIO_CACHE_USAGE_SECONDS=<seconds> | `--cache-usage-seconds SECONDS`   | `120`    | For how long the cache is valid. `-1` means unlimited.                                                                                                                                                                        |
 
 Note: if no authentication (username, password) is required (turned off in NETIO), the default can be used as the credentials are not checked on the NETIO side.
+
+### Caching
+Caching can be turned on in case your Netio has an unstable Wi-Fi connection. Caching will make sure the exporter can always provide data to prometheus to avoid gaps in metrics and graphs. When caching is turned on, the last obtained value is returned if querying netio was not successful. To avoid collecting stale data for a long time, the caching is set to 120s expiration by default. Cache usage can be limited either by time or usage count.
+
 
 ## How to run?
 ### Native

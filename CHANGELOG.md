@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.5] - 2024-05-15
+- arm support - docker multi-platform build. No changes in code.
+
 ## [0.0.4] - 2024-03-02
 - Added support for caching. This is handy when your netio often looses Wi-Fi connection and you graph in grafana contains gaps. Caching will return the latest collected value in case of problem. It will ensure smooth graph. Cache expiration is configurable to avoid serving stale data for long time.
 - Small bugfixes

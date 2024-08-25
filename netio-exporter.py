@@ -242,6 +242,9 @@ class NetioCollector:
             logger.debug('No output section found')
             return
 
+        # FIXME(jtomsa): don't assume that outputs are the same
+        # FIXME(jtomsa): they really arent
+        # FIXME(jtomsa): But now for 8QS we are lucky the first is actually metered
         # assuming there is at least one output
         # and that all outputs have the same format
 
@@ -263,6 +266,10 @@ class NetioCollector:
             # iterate over outputs
             # group the metric values from outputs
             for output in outputs:
+                # FIXME(jtomsa): handle better outputs without mettering
+                if metric_name not in output:
+                    logger.debug(f'Output {output["ID"]} is not complete - metric {metric_name} not present')
+                    continue
                 metric.add_metric(
                     labels=[str(output['ID']), str(output['Name'])],
                     # extract value and scale it to base SI units

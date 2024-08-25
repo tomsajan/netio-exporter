@@ -69,6 +69,7 @@ It is built by running:
 ```
 docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6 -t tomsajan/netio-exporter:x.x.x --push .
 ```
+(set up by `docker buildx create --use --name multi-arch-builder`)
 
 
 ## Prometheus metrics
